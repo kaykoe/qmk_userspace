@@ -304,10 +304,21 @@ static void print_status_narrow(void) {
     // oled_write_raw_P(SOUND_ON_MIC_ON, sizeof(SOUND_ON_MIC_ON));
 }
 
+bool is_oled_enabled = true;
+
 bool oled_task_user(void) {
-    // Render the OLED
+    if (!is_oled_enabled) {
+        oled_off();
+        return false;
+    } else  {
+        oled_on();
+    }
     print_status_narrow();
     return false;
+}
+
+void housekeeping_task_user(void) {
+    is_oled_enabled = (bool)(last_input_activity_elapsed() < 30000);
 }
 
 #endif
